@@ -29,11 +29,17 @@ export default function AdminMessagePage() {
       body: JSON.stringify({ content }),
     });
     setLoading(false);
-    const json = await res.json();
-    if (!res.ok) {
-      addToast({ type: "error", title: json.error ?? "Failed to send" });
-      return;
-    }
+  const json = await res.json();
+
+if (!res.ok) {
+  const errorMessage = 
+    typeof json === 'object' && json !== null && 'error' in json 
+      ? (json as { error: string }).error 
+      : "Failed to send";
+
+  addToast({ type: "error", title: errorMessage });
+  return;
+}
     addToast({ type: "success", title: "Message sent to Super Admin" });
     setContent("");
   };
