@@ -134,7 +134,7 @@ if (!res.ok) {
     <DashboardShell navItems={adminNav} title="Admin Dashboard">
       {stats && (
         <StatsCards
-          stats={stats as Parameters<typeof StatsCards>[0]["stats"]}
+        stats={stats as unknown as Parameters<typeof StatsCards>[0]["stats"]}
         />
       )}
 
