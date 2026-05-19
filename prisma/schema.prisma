@@ -1,0 +1,68 @@
+// Betting Data Entry PWA - Database Schema
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  USER
+}
+
+model User {
+  id              String    @id @default(cuid())
+  username        String    @unique
+  passwordHash    String
+  role            Role      @default(USER)
+  canEditEntries  Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Admin who created this user (null for super admin / bootstrap users)
+  createdById     String?
+  createdBy       User?     @relation("UserCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  createdUsers    User[]    @relation("UserCreator")
+
+  entries         Entry[]
+  sentMessages    Message[] @relation("MessageFromAdmin")
+
+  @@index([role])
+  @@index([createdById])
+}
+
+model Entry {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      DateTime
+  system    Float    @default(0)
+  online    Float    @default(0)
+  number    Float    @default(0)
+  bonus     Float    @default(0)
+  win       Float    @default(0)
+  cash      Float    @default(0)
+  note      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([date])
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  content   String
+  read      Boolean  @default(false)
+  adminId   String
+  admin     User     @relation("MessageFromAdmin", fields: [adminId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([read])
+  @@index([createdAt])
+}

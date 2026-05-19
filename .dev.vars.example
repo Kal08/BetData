@@ -1,0 +1,4 @@
+# Copy to .dev.vars for local Cloudflare Workers preview (wrangler)
+NEXTJS_ENV=development
+NEXTAUTH_URL=http://localhost:8787
+NEXTAUTH_SECRET=dev-secret-change-in-production
