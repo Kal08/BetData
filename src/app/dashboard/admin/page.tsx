@@ -101,11 +101,17 @@ export default function AdminDashboardPage() {
       }),
     });
     setCreating(false);
-    const json = await res.json();
-    if (!res.ok) {
-      addToast({ type: "error", title: json.error ?? "Failed" });
-      return;
-    }
+   const json = await res.json();
+
+if (!res.ok) {
+  const errorMessage = 
+    json && typeof json === 'object' && 'error' in json 
+      ? String((json as any).error) 
+      : "Failed";
+
+  addToast({ type: "error", title: errorMessage });
+  return;
+}
     addToast({ type: "success", title: "User created" });
     setShowCreate(false);
     setNewUsername("");
